@@ -18,12 +18,13 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope=scope
 ))
 
+# This function searches for the artist by name and returns the first exact match
 def find_artist_id(artist_name):
-    results = sp.search(q=f"artist:{artist_name}", type="artist", limit=1)
-    items = results['artists']['items']
-    if not items:
-        raise Exception(f"Artist '{artist_name}' not found.")
-    return items[0]['id'], items[0]['name']
+    results = sp.search(q=artist_name, type='artist', limit=10)
+    for artist in results['artists']['items']:
+        if artist['name'].lower() == artist_name.lower():
+            return artist['id'], artist['name']
+    raise Exception(f"Artist '{artist_name}' not found.")
 
 def get_all_albums(artist_id):
     albums = []
